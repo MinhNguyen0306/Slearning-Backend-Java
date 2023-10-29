@@ -6,8 +6,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -48,5 +50,17 @@ public class GlobalExceptionHandler {
                 .errorMessage(e.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<?> handleApiException(ApiException exception) {
+        ApiErrorResponse errorResponse = ApiErrorResponse
+                .builder()
+                .timestamp(LocalDateTime.now())
+                .errorCode(HttpStatus.FORBIDDEN.value())
+                .error(HttpStatus.FORBIDDEN.name())
+                .errorMessage(exception.getMessage())
+                .build();
+        return new ResponseEntity(errorResponse, HttpStatus.FORBIDDEN);
     }
 }
