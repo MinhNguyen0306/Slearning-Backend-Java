@@ -3,8 +3,6 @@ package com.example.Slearning.Backend.Java.domain.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +11,12 @@ import java.util.List;
 @Table(name = "roles")
 @Data
 @NoArgsConstructor
-public class Role extends BaseEntity {
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id", nullable = false)
+    private Integer id;
+
     @Column(name = "role_title")
     private String role;
 

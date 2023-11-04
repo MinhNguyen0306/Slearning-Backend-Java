@@ -63,4 +63,16 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity(errorResponse, HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<?> handleDuplicateException(DuplicateException exception) {
+        ApiErrorResponse errorResponse = ApiErrorResponse
+                .builder()
+                .timestamp(LocalDateTime.now())
+                .errorCode(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .errorMessage(exception.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

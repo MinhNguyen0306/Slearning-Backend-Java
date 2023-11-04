@@ -3,6 +3,7 @@ package com.example.Slearning.Backend.Java.domain.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @SQLDelete(sql = "UPDATE users SET deleted = true where user_id = ?")
 @Data
 @NoArgsConstructor @AllArgsConstructor
+@Builder
 public class User extends BaseEntity implements UserDetails {
 
     @Email(message = "Email not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
@@ -64,16 +66,13 @@ public class User extends BaseEntity implements UserDetails {
     @Pattern(regexp = "^(0|\\\\+84)(\\\\s|\\\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))" +
             "(\\\\d)(\\\\s|\\\\.)?(\\\\d{3})(\\\\s|\\\\.)?(\\\\d{3})$")
     @Size(min = 9, max = 11, message = "Phone number invalid")
-    @Where(clause = "isInstructor='true'")
     private String phone;
 
     @Column(name = "instructor_date_regis")
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    @Where(clause = "isInstructor='true'")
     private LocalDateTime dateRegisterInstructor;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Where(clause = "isInstructor='true'")
     private List<Course> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -52,12 +52,12 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        return null;
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     @Override
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        return generateRefreshToken(new HashMap<>(), userDetails);
     }
 
     @Override

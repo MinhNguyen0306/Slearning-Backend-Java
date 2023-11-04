@@ -1,15 +1,18 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "permission")
-public class Permission extends BaseEntity {
+public class Permission {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "permission_id", nullable = false)
+    private Integer id;
+
     @Column(name = "permission_title")
     private String permission;
 
