@@ -1,6 +1,9 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -11,6 +14,9 @@ import java.util.Set;
 @Table(name = "sub_category")
 @Where(clause = "deleted='false'")
 @SQLDelete(sql = "UPDATE t_user SET deleted = true WHERE sub_category_id = ?")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SubCategory extends BaseEntity{
 
     @Column(name = "sub_category_title")
