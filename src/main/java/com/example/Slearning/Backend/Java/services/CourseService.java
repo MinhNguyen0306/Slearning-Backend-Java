@@ -9,41 +9,41 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CourseService {
-    PageResponse<CourseDto> getAllCourse(
+    PageResponse<CourseDto> getAllCourses(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
             String sortDir
     );
-    PageResponse<CourseDto> filterCourseByStatus(
+    PageResponse<CourseDto> filterCoursesByStatus(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
             String sortDir,
             CourseStatus courseStatus
     );
-    PageResponse<CourseDto> filterCourseByRating(
+    PageResponse<CourseDto> filterCoursesByRating(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
             String sortDir,
             Integer rating
     );
-    PageResponse<CourseDto> filterCourseByTopic(
+    PageResponse<CourseDto> filterCoursesByTopic(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
             String sortDir,
             List<UUID> topicIdList
     );
-    PageResponse<CourseDto> filterCourseByLevel(
+    PageResponse<CourseDto> filterCoursesByLevel(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
             String sortDir,
             List<UUID> levelIdList
     );
-    PageResponse<CourseDto> filterCourseByPrice(
+    PageResponse<CourseDto> filterCoursesByPrice(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
@@ -56,7 +56,8 @@ public interface CourseService {
             UUID topicId,
             UUID levelId,
             MultipartFile imageCourse,
-            CourseDto courseDto);
+            CourseDto courseDto
+    );
     List<CourseDto> searchByKeyword(String searchKey);
     CourseDto getCourseById(UUID courseId);
     CourseDto updateCourse(CourseDto courseDto, UUID courseId);

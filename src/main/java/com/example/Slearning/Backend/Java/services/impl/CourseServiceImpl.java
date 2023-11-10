@@ -58,7 +58,7 @@ public class CourseServiceImpl implements CourseService {
     private CourseMapper courseMapper;
 
     @Override
-    public PageResponse<CourseDto> getAllCourse(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+    public PageResponse<CourseDto> getAllCourses(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
         Pageable pageable = PageUtils.getPageable(pageNumber, pageSize, sortBy, sortDir);
         Page<Course> page = courseRepository.findAll(pageable);
 
@@ -76,7 +76,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public PageResponse<CourseDto> filterCourseByStatus(
+    public PageResponse<CourseDto> filterCoursesByStatus(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
@@ -99,7 +99,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public PageResponse<CourseDto> filterCourseByRating(
+    public PageResponse<CourseDto> filterCoursesByRating(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
@@ -123,7 +123,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public PageResponse<CourseDto> filterCourseByTopic(
+    public PageResponse<CourseDto> filterCoursesByTopic(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
@@ -149,7 +149,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public PageResponse<CourseDto> filterCourseByLevel(
+    public PageResponse<CourseDto> filterCoursesByLevel(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
@@ -175,7 +175,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public PageResponse<CourseDto> filterCourseByPrice(
+    public PageResponse<CourseDto> filterCoursesByPrice(
             Integer pageNumber,
             Integer pageSize,
             String sortBy,
