@@ -2,6 +2,7 @@ package com.example.Slearning.Backend.Java.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
+@Data
 public abstract class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,7 +27,7 @@ public abstract class BaseEntity implements Serializable {
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Column(updatable = false)
-    private LocalDateTime createAt;
+    private LocalDateTime createAt = LocalDateTime.now();
 
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

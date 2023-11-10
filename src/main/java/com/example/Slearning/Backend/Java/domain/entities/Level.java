@@ -1,15 +1,12 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "levels")
@@ -21,6 +18,10 @@ public class Level extends BaseEntity {
     @Column(name = "level_title", nullable = false, unique = true)
     private String title;
 
-    @ManyToMany(mappedBy = "levels")
-    private Set<Course> course;
+    @OneToMany(mappedBy = "level", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Course> courses;
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
+    }
 }

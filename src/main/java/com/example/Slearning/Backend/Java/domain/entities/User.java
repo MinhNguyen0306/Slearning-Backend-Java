@@ -51,8 +51,9 @@ public class User extends BaseEntity implements UserDetails {
 
     private String education;
 
-    @Lob
-    private Blob avatar;
+    @OneToOne
+    @MapsId
+    private ImageStorage avatar;
 
     @LastModifiedDate
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
@@ -89,6 +90,13 @@ public class User extends BaseEntity implements UserDetails {
     )
     private List<Role> roles;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_image_storages",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<ImageStorage> imageStorages;
 
     // Auth Entity
     @Override
@@ -124,5 +132,9 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
     }
 }

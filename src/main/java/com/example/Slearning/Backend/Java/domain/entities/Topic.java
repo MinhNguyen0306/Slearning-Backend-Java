@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.List;
+
 @Entity
 @Table(name = "topics")
 @Where(clause = "deleted='false'")
@@ -21,7 +23,10 @@ public class Topic extends BaseEntity {
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Course> courses;
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.example.Slearning.Backend.Java.utils.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,10 @@ import org.hibernate.annotations.Where;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 public class Payment extends BaseEntity {
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_payment_course_status")
+    private PaymentStatus paymentStatus;
 
     @OneToOne
     @MapsId

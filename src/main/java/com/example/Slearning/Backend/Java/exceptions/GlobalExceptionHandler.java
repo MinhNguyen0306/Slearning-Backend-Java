@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.exceptions;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -7,7 +8,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Locale;
@@ -74,5 +77,29 @@ public class GlobalExceptionHandler {
                 .errorMessage(exception.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<?> handleFileSizeExcessException(MaxUploadSizeExceededException exception) {
+        ApiErrorResponse errorResponse = ApiErrorResponse
+                .builder()
+                .timestamp(LocalDateTime.now())
+                .errorCode(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.name())
+                .errorMessage(exception.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UploadFileException.class)
+    public ResponseEntity<?> handleUploadFileException(UploadFileException exception) {
+        ApiErrorResponse errorResponse = ApiErrorResponse
+                .builder()
+                .timestamp(LocalDateTime.now())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .errorMessage(exception.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

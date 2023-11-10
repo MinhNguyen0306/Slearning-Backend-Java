@@ -27,10 +27,6 @@ public class Course extends BaseEntity {
     @Column(name = "course_title")
     private String title;
 
-    @Column(name = "course_image")
-    @Lob
-    private Blob image;
-
     @Column(name = "course_description")
     private String description;
 
@@ -53,19 +49,21 @@ public class Course extends BaseEntity {
 
     private boolean isComplete = false;
 
+    @Column(name = "course_image")
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private ImageStorage image;
+
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "course_level",
-        joinColumns = @JoinColumn(name = "course_id"),
-        inverseJoinColumns = @JoinColumn(name = "level_id")
-    )
-    private Set<Level> levels = new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "level_id")
+    private Level level;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Topic> topics = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
 
     @OneToMany(mappedBy = "course")
     private Set<CourseRating> ratings = new HashSet<>();
@@ -78,4 +76,8 @@ public class Course extends BaseEntity {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Enroll> enrolls;
+
+    public void addChapter(Chapter chapter) {
+        this.chapters.add(chapter);
+    }
 }
