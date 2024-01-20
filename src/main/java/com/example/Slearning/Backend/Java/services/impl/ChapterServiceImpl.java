@@ -3,6 +3,7 @@ package com.example.Slearning.Backend.Java.services.impl;
 import com.example.Slearning.Backend.Java.domain.dtos.ChapterDto;
 import com.example.Slearning.Backend.Java.domain.entities.Chapter;
 import com.example.Slearning.Backend.Java.domain.entities.Course;
+import com.example.Slearning.Backend.Java.domain.entities.Lecture;
 import com.example.Slearning.Backend.Java.domain.mappers.ChapterMapper;
 import com.example.Slearning.Backend.Java.exceptions.ResourceNotFoundException;
 import com.example.Slearning.Backend.Java.repositories.ChapterRepository;
@@ -13,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,15 +32,37 @@ public class ChapterServiceImpl implements ChapterService {
     private final ChapterMapper chapterMapper;
 
     @Override
-    public ChapterDto createChapter(UUID courseId, ChapterDto chapterDto) {
+    public ChapterDto createChapter(UUID courseId, String title, String description) {
         Course course = this.courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Course", "Id", courseId));
-        Chapter chapter = this.chapterMapper.dtoToChapter(chapterDto);
+                .orElseThrow(() -> new ResourceNotFoundException("Course", "Id", courseId.toString()));
+
+        boolean checkExisted = course.getChapters().stream()
+                .anyMatch(chapter -> chapter.getTitle().equalsIgnoreCase(title));
+
+        if(checkExisted) {
+            throw new IllegalStateException("Chapter da ton tai");
+        }
+
+        Chapter chapter = new Chapter();
+        chapter.setTitle(title);
+        chapter.setDescription(description);
+        chapter.setCompleted(false);
+        chapter.setPublishStatus(PublishStatus.PUBLISHING);
+
+        List<Chapter> existedChapters = course.getChapters();
+        Collections.sort(existedChapters);
+
+        if(existedChapters.size() > 0) {
+            chapter.setPosition(existedChapters.get(existedChapters.size() - 1).getPosition() + 1);
+        } else {
+            chapter.setPosition(1);
+        }
+
         course.addChapter(chapter);
-        Course updatedCourse = this.courseRepository.save(course);
-        chapter.setCourse(updatedCourse);
-        Chapter createdChapter = chapterRepository.save(chapter);
-        return this.chapterMapper.chapterToDto(createdChapter);
+        Course updated = this.courseRepository.save(course);
+        chapter.setCourse(updated);
+        Chapter stored = this.chapterRepository.save(chapter);
+        return this.chapterMapper.chapterToDto(stored);
     }
 
     @Override
@@ -45,6 +71,16 @@ public class ChapterServiceImpl implements ChapterService {
                 .orElseThrow(() -> new ResourceNotFoundException("Chapter", "Id", chapterId));
         ChapterDto chapterDto = this.chapterMapper.chapterToDto(chapter);
         return chapterDto;
+    }
+
+    @Override
+    public ChapterDto getChapterOfLecture(UUID lectureId) {
+        Optional<Chapter> chapter = this.chapterRepository.getChapterOfLecture(lectureId);
+        if(chapter.isPresent()) {
+            return this.chapterMapper.chapterToDto(chapter.get());
+        } else {
+            throw new ResourceNotFoundException("Chapter", "Lecture", lectureId);
+        }
     }
 
     @Override

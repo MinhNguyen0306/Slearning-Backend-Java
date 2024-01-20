@@ -1,5 +1,7 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.example.Slearning.Backend.Java.utils.enums.QuestionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +15,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "questions")
-@Where(clause = "deleted='false'")
-@SQLDelete(sql = "UPDATE questions SET deleted = true where question_id = ?")
 @Data
 @NoArgsConstructor @AllArgsConstructor
 public class Question extends BaseEntity {
@@ -22,10 +22,14 @@ public class Question extends BaseEntity {
     @Min(value = 5, message = "Min length is 5")
     private String question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private QuestionType questionType;
+
+    @ManyToOne
     @JoinColumn(name = "chapter_id")
+    @JsonIgnore
     private Chapter chapter;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answers;
 }

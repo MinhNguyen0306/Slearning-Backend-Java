@@ -20,12 +20,6 @@ import java.util.UUID;
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
 
-    @Value("${project.images}")
-    private String imagePath;
-
-    @Value("${project.videos}")
-    private String videoPath;
-
     @Autowired
     private ImageStorageRepository imageStorageRepository;
 
@@ -33,13 +27,13 @@ public class FileStorageServiceImpl implements FileStorageService {
     private VideoStorageRepository videoStorageRepository;
 
     @Override
-    public String uploadImage(String pathServer, MultipartFile file) throws IOException {
+    public String uploadFile(String pathServer, MultipartFile file) throws IOException {
         String originalName = file.getOriginalFilename();
 
         String randomID = UUID.randomUUID().toString();
-        String fileName = randomID.concat(FileUtils.getExtensionFile(originalName));
+        String fileName = randomID.concat(originalName.substring(originalName.lastIndexOf(".")));
 
-        String filePath = imagePath + File.separator + fileName;
+        String filePath = pathServer + File.separator + fileName;
 
         File f = new File(pathServer);
         if(!f.exists())
@@ -51,8 +45,8 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public InputStream getImageResource(String pathServer, String fileName) throws IOException {
-        String fullPath = imagePath + File.separator + fileName;
+    public InputStream getFileResource(String pathServer, String fileName) throws IOException {
+        String fullPath = pathServer + File.separator + fileName;
         InputStream inputStream = new FileInputStream(fullPath);
         return inputStream;
     }

@@ -7,12 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubCategoryDto {
+    private UUID id;
     private String title;
+    private boolean isLock;
     private Category category;
     private Set<Topic> topics;
 }

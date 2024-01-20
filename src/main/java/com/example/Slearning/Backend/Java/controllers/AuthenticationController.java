@@ -6,12 +6,15 @@ import com.example.Slearning.Backend.Java.domain.responses.AuthenticationRespons
 import com.example.Slearning.Backend.Java.exceptions.ApiException;
 import com.example.Slearning.Backend.Java.exceptions.DuplicateException;
 import com.example.Slearning.Backend.Java.services.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -44,5 +47,13 @@ public class AuthenticationController {
         } catch (DuplicateException exception) {
             throw exception;
         }
+    }
+
+    @PostMapping("/{userId}/refresh-token")
+    public void refreshToken(
+        @PathVariable UUID userId,
+        HttpServletResponse response
+    ) throws IOException {
+        this.authenticationService.refreshToken(userId, response);
     }
 }

@@ -92,17 +92,16 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .authenticated()
                 )
-                .exceptionHandling((exceptionHandling) ->
-                        exceptionHandling
-                                .authenticationEntryPoint(authenticationEntryPoint)
-                )
+//                .exceptionHandling((exceptionHandling) ->
+//                        exceptionHandling
+//                                .authenticationEntryPoint(authenticationEntryPoint)
+//                )
                 .sessionManagement((sessionManagement) ->
                         sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }

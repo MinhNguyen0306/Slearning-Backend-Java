@@ -10,16 +10,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseDto {
 
+    private UUID id;
     @NotEmpty(message = "Title not empty")
     @NotBlank(message = "Title not blank")
     private String title;
@@ -47,10 +45,9 @@ public class CourseDto {
     private CourseStatus status;
     private boolean isAdvertising = false;
     private boolean isComplete = false;
-    private List<Chapter> chapters = new ArrayList<>();
+    private List<Chapter> chapters;
     private Level level;
     private Topic topic;
-    private Set<CourseRating> ratings = new HashSet<>();
+//    private Set<CourseRating> ratings;
     private User user;
-    private List<Enroll> enrolls;
 }

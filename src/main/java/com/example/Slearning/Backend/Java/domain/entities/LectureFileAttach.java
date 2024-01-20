@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,23 +12,19 @@ import java.util.UUID;
 @Table(name = "lecture_file_attach")
 @Data
 @NoArgsConstructor @AllArgsConstructor
-public class LectureFileAttach {
+public class LectureFileAttach extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "lecture_file_attach_id", nullable = false)
-    private UUID id;
+    private String fileName;
 
-    @Column(name = "lecture_file_attach")
-    @Lob
-    private byte[] fileAttach;
+    private String fileUrl;
 
     @Column(name = "file_extension")
     private String fileType;
 
-    private Double fileSize;
+    private long fileSize;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "lecture_id")
+    @JsonIgnore
     private Lecture lecture;
 }

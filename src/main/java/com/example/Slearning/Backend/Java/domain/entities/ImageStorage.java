@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,18 +27,11 @@ public class ImageStorage extends BaseEntity {
     @Column(name = "image_type")
     private String extension;
 
-    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
-    private List<Course> courses = new ArrayList<>();
+    @OneToOne(mappedBy = "image")
+    @JsonIgnore
+    private Course course;
 
-    @ManyToMany(mappedBy = "imageStorages")
-    @Column(name = "user_image_storages")
-    private List<User> users;
-
-    @OneToOne
-    @MapsId
+    @OneToOne(mappedBy = "avatar")
+    @JsonIgnore
     private User user;
-
-    public void addCourse(Course course) {
-        this.courses.add(course);
-    }
 }

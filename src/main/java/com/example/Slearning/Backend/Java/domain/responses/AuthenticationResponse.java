@@ -12,7 +12,6 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor @AllArgsConstructor
 public class AuthenticationResponse {
-    UserDto userDto;
+    UserDto user;
     Map<String, String> tokens;
-    String message;
 }

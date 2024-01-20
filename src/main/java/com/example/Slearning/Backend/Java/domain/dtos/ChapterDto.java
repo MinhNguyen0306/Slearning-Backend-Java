@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChapterDto {
-
+    private UUID id;
     private String description;
     private String title;
     private Integer position;
@@ -23,6 +24,6 @@ public class ChapterDto {
     private boolean isLast;
     private boolean isCompleted;
     private Course course;
-    private List<Lecture> lectures = new ArrayList<>();
-    private List<Question> questions = new ArrayList<>();
+    private List<Lecture> lectures;
+    private List<Question> questions;
 }

@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,15 +11,19 @@ import java.util.List;
 
 @Entity
 @Table(name = "levels")
-@Where(clause = "deleted='false'")
-@SQLDelete(sql = "UPDATE levels SET deleted = true where level_id = ?")
 @Data
 @NoArgsConstructor
-public class Level extends BaseEntity {
+public class Level {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "level_id")
+    private Integer id;
+
     @Column(name = "level_title", nullable = false, unique = true)
     private String title;
 
-    @OneToMany(mappedBy = "level", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Course> courses;
 
     public void addCourse(Course course) {

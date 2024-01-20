@@ -1,15 +1,17 @@
 package com.example.Slearning.Backend.Java.exceptions;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @AllArgsConstructor
+@NoArgsConstructor
 public class ResourceNotFoundException extends RuntimeException {
     private String resourceName;
     private String fieldName;
     private int intValue;
-    private UUID uuidValue;
+    private String uuidValue;
     private String stringValue;
 
     public ResourceNotFoundException(String resourceName, String fieldName, int intValue) {
@@ -30,6 +32,6 @@ public class ResourceNotFoundException extends RuntimeException {
         super(String.format("%s not found with %s: %s", resourceName, fieldName, uuidValue.toString()));
         this.resourceName = resourceName;
         this.fieldName = fieldName;
-        this.uuidValue = uuidValue;
+        this.uuidValue = uuidValue.toString();
     }
 }

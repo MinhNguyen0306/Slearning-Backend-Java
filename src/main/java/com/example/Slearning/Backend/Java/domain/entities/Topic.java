@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,14 +17,18 @@ import java.util.List;
 @Data
 @AllArgsConstructor @NoArgsConstructor
 public class Topic extends BaseEntity {
+
     @Column(name = "topic_title")
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private boolean isLock = false;
+
+    @ManyToOne
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
-    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Course> courses;
 
     public void addCourse(Course course) {

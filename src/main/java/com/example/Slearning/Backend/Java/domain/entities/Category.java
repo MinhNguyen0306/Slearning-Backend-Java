@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +17,13 @@ import java.util.Set;
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
 @Data
 @AllArgsConstructor @NoArgsConstructor
-public class Category extends BaseEntity{
+public class Category extends BaseEntity {
+
     private String title;
 
+    private boolean isLock = false;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<SubCategory> subCategories = new HashSet<>();
+    @JsonIgnore
+    private Set<SubCategory> subCategories;
 }

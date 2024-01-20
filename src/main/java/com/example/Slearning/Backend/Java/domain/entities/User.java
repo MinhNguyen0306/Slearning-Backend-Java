@@ -1,6 +1,8 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.example.Slearning.Backend.Java.utils.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,14 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.sql.Blob;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,22 +43,29 @@ public class User extends BaseEntity implements UserDetails {
 
     private Integer age;
 
-    @Size(min = 50, message = "About must be at least 50 character")
+    @Size(min = 200, message = "It nhat 200 ky tu")
+    @Max(value = 1000, message = "Khong duoc qua 1000 ky tu")
+    @Column(length = 1000)
     private String about;
 
     private String education;
 
     @OneToOne
-    @MapsId
+    @JoinColumn(name = "avatar", referencedColumnName = "id")
     private ImageStorage avatar;
 
     @LastModifiedDate
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDate lastLogin;
 
-    private boolean isLock = false;
+    private boolean isLock;
 
-    private boolean isInstructor = false;
+    private boolean isEnabled;
+
+    private boolean isInstructor;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
     @Column(name = "instructor_phone")
     @Pattern(regexp = "^(0|\\\\+84)(\\\\s|\\\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))" +
@@ -73,16 +77,34 @@ public class User extends BaseEntity implements UserDetails {
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime dateRegisterInstructor;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Course> courses = new ArrayList<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private AccountBalance accountBalance;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Enroll> enrolls = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Course> courses;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CourseRating> courseRatings;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Payment> payments;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<AdminPayment> adminPayments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkExperience> workExperiences;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Progress> progresses;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CalendarEvent> calendarEvents;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
         name = "user_role",
         joinColumns = @JoinColumn(name = "user_id"),
@@ -90,13 +112,17 @@ public class User extends BaseEntity implements UserDetails {
     )
     private List<Role> roles;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_image_storages",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
-    )
-    private List<ImageStorage> imageStorages;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Token> tokens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<DeviceToken> deviceTokens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<VerificationToken> verificationTokens;
 
     // Auth Entity
     @Override
@@ -136,5 +162,21 @@ public class User extends BaseEntity implements UserDetails {
 
     public void addCourse(Course course) {
         this.courses.add(course);
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void addWorkExperience(WorkExperience workExperience) {
+        this.workExperiences.add(workExperience);
+    }
+
+    public void dismissToken(Token token) {
+        this.tokens.remove(token);
+    }
+
+    public void dismissDeviceToken(DeviceToken deviceToken) {
+        this.deviceTokens.remove(deviceToken);
     }
 }

@@ -1,6 +1,9 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +14,8 @@ import javax.validation.constraints.NotEmpty;
 @Table(name = "answers")
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Answer extends BaseEntity {
 
     @Column(name = "answer_content", nullable = false)
@@ -22,5 +27,6 @@ public class Answer extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "question_id")
+    @JsonIgnore
     private Question question;
 }

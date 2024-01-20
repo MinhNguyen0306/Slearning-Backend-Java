@@ -18,8 +18,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "courses")
-@Where(clause = "deleted='false'")
-@SQLDelete(sql = "UPDATE courses SET deleted = true where id = ?")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,39 +41,40 @@ public class Course extends BaseEntity {
     private Double price;
 
     @Column(name = "course_status")
+    @Enumerated(EnumType.STRING)
     private CourseStatus status;
 
     private boolean isAdvertising = false;
 
     private boolean isComplete = false;
 
-    @Column(name = "course_image")
-    @ManyToOne
-    @JoinColumn(name = "image_id")
+    @OneToOne
+    @JoinColumn(name = "image_url", referencedColumnName = "id")
     private ImageStorage image;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Chapter> chapters = new ArrayList<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chapter> chapters;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "level_id")
     private Level level;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @OneToMany(mappedBy = "course")
-    private Set<CourseRating> ratings = new HashSet<>();
+//    @OneToMany(mappedBy = "course")
+//    @JsonIgnore
+//    private Set<CourseRating> ratings;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<Enroll> enrolls;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Payment> payments;
 
     public void addChapter(Chapter chapter) {
         this.chapters.add(chapter);

@@ -11,20 +11,43 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, UUID> {
 
-    @Query(value = "SELECT c FROM Course c WHERE c.courseStatus = ?1")
-    Page<Course> filterCourseByStatus(Pageable pageable, CourseStatus courseStatus);
+    @Query("SELECT c FROM Course c, Payment p " +
+            "WHERE c.id = p.course.id " +
+            "AND p.id = ?1 ")
+    Optional<Course> getCourseOfPayment(UUID paymentId);
 
+    @Query(value = "SELECT c FROM Course c WHERE c.status = :status")
+    Page<Course> filterCourseByStatus(Pageable pageable, @Param(value = "status") CourseStatus courseStatus);
+
+    @Query(value = "SELECT c FROM Course c WHERE c.status = :status AND c.user.id = :userId")
+    Page<Course> filterCourseByStatusOfUser(
+            Pageable pageable,
+            @Param(value = "userId") UUID userId,
+            @Param(value = "status") CourseStatus courseStatus
+    );
+
+    // Co loi query nham attribute
     @Query(value = "select * from courses where course in " +
             "(select * from course_ratings join courses on courses.id = course_ratings.course_id " +
             "where user_rating_course >= ?1)", nativeQuery = true)
     Page<Course> filterCourseByRating(Pageable pageable, Integer rating);
 
-    @Query(value = "SELECT c FROM Course c JOIN User u ON c.user_id = u.id " +
-            "WHERE c.courseTitle LIKE %:searchKey% OR u.fullName LIKE %:searchKey%")
-    List<Course> searchCourseByTitle(@Param(value = "searchKey") String searchKey);
+    @Query("SELECT c FROM Course c " +
+            "WHERE c.status = PUBLISHING " +
+            "AND c.price >= :fromPrice " +
+            "AND c.price <= :toPrice ")
+    Page<Course> filterCoursesByPrice(
+            Pageable pageable,
+            @Param("fromPrice") Integer fromPrice,
+            @Param("toPrice") Integer toPrice
+    );
+
+    @Query("SELECT c FROM Course c WHERE c.title LIKE %:searchKey% AND c.status = PUBLISHING")
+    Page<Course> searchCourseByTitle(Pageable pageable, @Param(value = "searchKey") String searchKey);
 }

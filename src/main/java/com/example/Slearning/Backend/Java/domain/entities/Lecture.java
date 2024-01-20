@@ -1,6 +1,7 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
 import com.example.Slearning.Backend.Java.utils.enums.PublishStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,16 +11,14 @@ import org.hibernate.annotations.Where;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "lectures")
-@Where(clause = "deleted='false'")
-@SQLDelete(sql = "UPDATE lectures SET deleted = true WHERE lecture_id = ?")
 @Data
 @NoArgsConstructor @AllArgsConstructor
-public class Lecture extends BaseEntity {
+public class Lecture extends BaseEntity implements Comparable<Lecture> {
 
     @Column(name = "lecture_title")
     @Size(min = 2, max = 100, message = "Min 2 and max 100 characters")
@@ -39,21 +38,34 @@ public class Lecture extends BaseEntity {
     @Column(name = "is_last_lecture")
     private boolean isLast = false;
 
-    @Column(name = "is_completed_lecture")
-    private boolean isCompleted = false;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "lecture_publish_status")
     private PublishStatus publishStatus;
 
     @OneToOne
-    @MapsId
+    @JoinColumn(name = "video_id", referencedColumnName = "id")
     private VideoStorage videoStorage;
 
-    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<LectureFileAttach> lectureFileAttaches;
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LectureFileAttach> lectureFileAttaches = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "lecture")
+    @JsonIgnore
+    private List<Progress> progresses;
+
+    @ManyToOne
     @JoinColumn(name = "chapter_id")
+    @JsonIgnore
     private Chapter chapter;
+
+    @Override
+    public int compareTo(Lecture lecture) {
+        if(this.getPosition() > lecture.getPosition()) {
+            return 1;
+        } else if(this.getPosition() < lecture.getPosition()) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 }

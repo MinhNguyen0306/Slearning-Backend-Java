@@ -7,10 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor
 public class CategoryDto {
+    private UUID id;
     private String title;
+    private boolean isLock;
     private Set<SubCategory> subCategories;
 }

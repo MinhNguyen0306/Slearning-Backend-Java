@@ -1,27 +1,30 @@
 package com.example.Slearning.Backend.Java.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "course_ratings")
 @Data
 @NoArgsConstructor
 public class CourseRating {
+
+    @Column(name = "course_rating_id")
     @EmbeddedId
     private CourseRatingKey id;
 
-    @ManyToOne
-    @MapsId("courseId")
-    @JoinColumn(name = "course_id")
-    private Course course;
+    private Integer rating = 0;
 
-    @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String comment;
 
-    @Column(name = "user_rating_course")
-    private Integer rating;
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    private LocalDateTime createAt = LocalDateTime.now();
+
+    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    private LocalDateTime updateAt;
 }
