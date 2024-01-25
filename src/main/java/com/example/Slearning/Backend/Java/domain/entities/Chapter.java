@@ -45,6 +45,10 @@ public class Chapter extends BaseEntity implements Comparable<Chapter> {
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lecture> lectures;
 
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<CodingExercise> codingExercises;
+
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 

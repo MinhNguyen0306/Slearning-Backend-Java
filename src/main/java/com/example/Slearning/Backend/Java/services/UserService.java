@@ -5,6 +5,7 @@ import com.example.Slearning.Backend.Java.domain.entities.User;
 import com.example.Slearning.Backend.Java.domain.entities.WorkExperience;
 import com.example.Slearning.Backend.Java.domain.responses.ApiResponse;
 import com.example.Slearning.Backend.Java.domain.responses.PageResponse;
+import com.example.Slearning.Backend.Java.domain.responses.UserEnrollsResponse;
 import com.example.Slearning.Backend.Java.utils.enums.AdminFetchUserState;
 import com.example.Slearning.Backend.Java.utils.enums.ResolveStatus;
 import com.example.Slearning.Backend.Java.utils.enums.UserStatus;
@@ -16,6 +17,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
+
+    PageResponse<UserEnrollsResponse> getUserEnrollsOfMentor(
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortDir,
+            UUID mentorId
+    );
 
     UserDto getUserById(UUID userId);
 

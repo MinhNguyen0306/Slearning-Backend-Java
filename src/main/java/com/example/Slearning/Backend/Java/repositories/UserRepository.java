@@ -1,5 +1,6 @@
 package com.example.Slearning.Backend.Java.repositories;
 
+import com.example.Slearning.Backend.Java.domain.entities.Course;
 import com.example.Slearning.Backend.Java.domain.entities.Payment;
 import com.example.Slearning.Backend.Java.domain.entities.User;
 import com.example.Slearning.Backend.Java.utils.enums.AdminFetchUserState;
@@ -29,4 +30,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.isInstructor = true")
     Page<User> filterUserIsInstructor(Pageable pageable);
+
+    @Query("SELECT u FROM User u, Payment p, Course c " +
+            "WHERE p.course.user.id = :mentorId " +
+            "AND p.course.id = c.id " +
+            "AND u.id = p.user.id ")
+    Page<User> getUserEnrollsOfMentor(Pageable pageable, @Param(value = "mentorId") UUID mentorId);
 }

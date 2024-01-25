@@ -1,6 +1,7 @@
 package com.example.Slearning.Backend.Java.repositories;
 
 import com.example.Slearning.Backend.Java.domain.entities.Course;
+import com.example.Slearning.Backend.Java.domain.entities.CourseRating;
 import com.example.Slearning.Backend.Java.utils.enums.CourseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,19 @@ import java.util.UUID;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, UUID> {
+    @Query("SELECT c.title, COUNT(r.id.courseID) nCourse FROM Course c, CourseRating r " +
+            "WHERE c.id = r.id.courseID " +
+            "AND c.user.id = ?1 " +
+            "GROUP BY r.id.courseID " +
+            "ORDER By nCourse DESC LIMIT 5 ")
+    List<String> top5Rate(UUID mentorId);
+
+    @Query("SELECT AVG(r.rating), COUNT(r.id.courseID) nCourse FROM Course c, CourseRating r " +
+            "WHERE c.id = r.id.courseID " +
+            "AND c.user.id = ?1 " +
+            "GROUP BY r.id.courseID " +
+            "ORDER By nCourse DESC LIMIT 5 ")
+    List<Integer> top5RateNumberRate(UUID mentorId);
 
     @Query("SELECT c FROM Course c, Payment p " +
             "WHERE c.id = p.course.id " +

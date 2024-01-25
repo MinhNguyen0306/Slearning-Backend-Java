@@ -34,6 +34,8 @@ public class ProgressServiceImpl implements ProgressService {
 
     private final LectureRepository lectureRepository;
 
+    private final TrackingCodingExRepository trackingCodingExRepository;
+
     private final ChapterRepository chapterRepository;
 
     private final PaymentService paymentService;
@@ -137,25 +139,6 @@ public class ProgressServiceImpl implements ProgressService {
         Progress progressOfUserAtLecture = getProgressOfLecture(userId, lectureId);
         boolean checkHaveQuestion = curChapter.getQuestions().size() > 0;
 
-//        if(progressOfUserAtLecture.isCompleted() == true) {
-//            if(nextLecture.isPresent()) {
-//                Optional<Progress> nextLectureProgress = nextLecture.get().getProgresses().stream()
-//                        .filter(progress -> progress.getUser().getId().equals(userId))
-//                        .findFirst();
-//                if(nextLectureProgress.isPresent()) {
-//                    return nextLectureProgress.get();
-//                } else {
-//                    throw new IllegalStateException("Lỗi Data");
-//                }
-//            } else {
-//                if(!checkHaveQuestion) {
-//                    List<Lecture> lectures = nextChapter.get().getLectures();
-//                    Collections.sort(lectures);
-//                    return getProgressOfLecture(userId, lectures.get(0).getId());
-//                }
-//            }
-//        }
-
         Optional<Progress> currentProgressOptional = this.progressRepository.getCurrentProgress(userId, courseId);
         Progress currentProgress;
         if(currentProgressOptional.isPresent()) {
@@ -180,6 +163,16 @@ public class ProgressServiceImpl implements ProgressService {
                             // TODO: Nếu đã làm bài Test rồi thì chuyển sang Chapter tiếp theo luôn
                             return nextChapterProgresses.get(0);
                         } else {
+                            // TODO: Nếu có bài tập coding thì track
+                            if(lecture.getCodingExercises() != null && lecture.getCodingExercises().size() > 0) {
+                                TrackingCodingEx trackingCodingEx = new TrackingCodingEx();
+                                trackingCodingEx.setCodingExercise(lecture.getCodingExercises().get(0));
+                                trackingCodingEx.setCompleted(false);
+                                trackingCodingEx.setPrevLectureId(lecture.getId().toString());
+                                trackingCodingEx.setNextLectureId(nextChapter.get().getLectures().get(0).getId().toString());
+                                trackingCodingEx.setUser(user);
+                                trackingCodingExRepository.save(trackingCodingEx);
+                            }
                             // TODO: Nếu không thì chuyển đến bài Test
                             // TODO: Nếu đã hoàn thành thì kiểm tra khi nào pass Test mới đến Chapter kế tiếp
                             // TODO: Kiểm tra có pass Test không
@@ -207,6 +200,15 @@ public class ProgressServiceImpl implements ProgressService {
                             // TODO: Chưa hoàn thành Progress hiện tại nên hoàn thành nó
                             progressOfUserAtLecture.setCompleted(true);
                             this.progressRepository.save(currentProgress);
+                            // TODO: Nếu có bài tập coding thì track
+                            if(lecture.getCodingExercises() != null && lecture.getCodingExercises().size() > 0) {
+                                TrackingCodingEx trackingCodingEx = new TrackingCodingEx();
+                                trackingCodingEx.setCodingExercise(lecture.getCodingExercises().get(0));
+                                trackingCodingEx.setCompleted(false);
+                                trackingCodingEx.setPrevLectureId(lecture.getId().toString());
+                                trackingCodingEx.setUser(user);
+                                trackingCodingExRepository.save(trackingCodingEx);
+                            }
                         }
                         return null;
                     }
@@ -220,7 +222,6 @@ public class ProgressServiceImpl implements ProgressService {
                     // TODO: Nếu bài giảng cuối chương đã hoàn thành thì trả về Progress của bài giảng
                     return currentProgress;
                 }
-
             } else {
                 // TODO: Không có bài Test nên cho qua luôn
                 // TODO: Kiểm tra đã hoàn thành trước đó chưa
@@ -256,6 +257,16 @@ public class ProgressServiceImpl implements ProgressService {
             // TODO: Kiểm tra đã hoàn thành trước đó chưa
             System.err.println(currentProgress.getLecture().getTitle() + " " + currentProgress.isCompleted());
             if(!getProgressOfLecture(userId, lectureId).isCompleted()) {
+                // TODO: Nếu có bài tập coding thì track
+                if(lecture.getCodingExercises() != null && lecture.getCodingExercises().size() > 0) {
+                    TrackingCodingEx trackingCodingEx = new TrackingCodingEx();
+                    trackingCodingEx.setCodingExercise(lecture.getCodingExercises().get(0));
+                    trackingCodingEx.setCompleted(false);
+                    trackingCodingEx.setPrevLectureId(lecture.getId().toString());
+                    trackingCodingEx.setNextLectureId(nextLecture.get().getId().toString());
+                    trackingCodingEx.setUser(user);
+                    trackingCodingExRepository.save(trackingCodingEx);
+                }
                 // TODO: Chưa hoàn thành nên tạo Progress mới
                 progressOfUserAtLecture.setCompleted(true);
                 progressRepository.save(currentProgress);

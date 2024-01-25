@@ -6,6 +6,7 @@ import com.example.Slearning.Backend.Java.domain.entities.*;
 import com.example.Slearning.Backend.Java.domain.mappers.UserMapper;
 import com.example.Slearning.Backend.Java.domain.responses.ApiResponse;
 import com.example.Slearning.Backend.Java.domain.responses.PageResponse;
+import com.example.Slearning.Backend.Java.domain.responses.UserEnrollsResponse;
 import com.example.Slearning.Backend.Java.exceptions.ResourceNotFoundException;
 import com.example.Slearning.Backend.Java.exceptions.UploadFileException;
 import com.example.Slearning.Backend.Java.repositories.ImageStorageRepository;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -62,6 +64,47 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "Email", username));
         return user;
+    }
+
+    @Override
+    public PageResponse<UserEnrollsResponse> getUserEnrollsOfMentor(
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortDir,
+            UUID mentorId
+    ) {
+        User mentor = this.userRepository.findById(mentorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Mentor", "Id", mentorId));
+        Pageable pageable = PageUtils.getPageable(pageNumber, pageSize, sortBy, sortDir);
+        Page<User> page = userRepository.getUserEnrollsOfMentor(pageable, mentorId);
+
+        List<User> users = page.getContent();
+        List<UserDto> userDtos = this.userMapper.usersToDtos(users);
+        List<UserEnrollsResponse> content = new ArrayList<>();
+
+        for(UserDto userDto : userDtos) {
+            UserEnrollsResponse userEnrollsResponse = new UserEnrollsResponse();
+            List<String> coursesName = new ArrayList<>();
+            for(Payment payment: userDto.getPayments()) {
+                Course course = payment.getCourse();
+                if(course.getUser().getId().equals(mentor.getId())) {
+                    coursesName.add(course.getTitle());
+                }
+            }
+            userEnrollsResponse.setUser(userDto);
+            userEnrollsResponse.setCoursesName(coursesName);
+            content.add(userEnrollsResponse);
+        }
+
+        PageResponse<UserEnrollsResponse> pageResponse = new PageResponse<>();
+        pageResponse.setPageNumber(pageNumber);
+        pageResponse.setPageSize(pageSize);
+        pageResponse.setTotalPages(page.getTotalPages());
+        pageResponse.setTotalElements(page.getTotalElements());
+        pageResponse.setContent(content);
+        pageResponse.setLast(page.isLast());
+        return pageResponse;
     }
 
     @Override

@@ -102,6 +102,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    private List<TrackingCodingEx> trackingCodingExes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<CalendarEvent> calendarEvents;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

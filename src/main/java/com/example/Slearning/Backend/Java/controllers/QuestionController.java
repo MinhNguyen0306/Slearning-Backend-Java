@@ -20,6 +20,14 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
+    @PatchMapping("/{questionId}/add/explanation")
+    public ResponseEntity<String> addQuestionExplanation(
+            @PathVariable UUID questionId,
+            @RequestParam("explanation") String explanation
+    ) {
+        return ResponseEntity.ok(questionService.addQuestionExplanation(questionId, explanation));
+    }
+
     @GetMapping("/{questionId}")
     public ResponseEntity<Question> getQuestionById(@PathVariable UUID questionId) {
         Question question = this.questionService.getQuestionById(questionId);

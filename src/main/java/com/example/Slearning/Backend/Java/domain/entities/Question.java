@@ -25,6 +25,8 @@ public class Question extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
 
+    private String explanation;
+
     @ManyToOne
     @JoinColumn(name = "chapter_id")
     @JsonIgnore

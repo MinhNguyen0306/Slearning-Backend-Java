@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
-
     private final ChapterRepository chapterRepository;
 
     private final QuestionRepository questionRepository;
@@ -29,6 +28,15 @@ public class QuestionServiceImpl implements QuestionService {
     private final ProgressService progressService;
 
     private final AnswerRepository answerRepository;
+
+    @Override
+    public String addQuestionExplanation(UUID questionId, String explanation) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question", "Id", questionId));
+        question.setExplanation(explanation);
+        questionRepository.save(question);
+        return explanation;
+    }
 
     @Override
     public Question getQuestionById(UUID questionId) {

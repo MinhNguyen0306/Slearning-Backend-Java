@@ -5,6 +5,7 @@ import com.example.Slearning.Backend.Java.domain.dtos.UserDto;
 import com.example.Slearning.Backend.Java.domain.entities.WorkExperience;
 import com.example.Slearning.Backend.Java.domain.responses.ApiResponse;
 import com.example.Slearning.Backend.Java.domain.responses.PageResponse;
+import com.example.Slearning.Backend.Java.domain.responses.UserEnrollsResponse;
 import com.example.Slearning.Backend.Java.services.UserService;
 import com.example.Slearning.Backend.Java.utils.enums.AdminFetchUserState;
 import com.example.Slearning.Backend.Java.utils.enums.ResolveStatus;
@@ -42,6 +43,19 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID userId) {
         UserDto user = this.userService.getUserById(userId);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/student-of-mentor")
+    public ResponseEntity<PageResponse<UserEnrollsResponse>> getStudentsOfMentor(
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir,
+            @RequestParam("mentorId") UUID mentorId
+    ) {
+        return ResponseEntity.ok(
+                userService.getUserEnrollsOfMentor(pageNumber, pageSize, sortBy, sortDir, mentorId)
+        );
     }
 
     @PostMapping("/{userId}")

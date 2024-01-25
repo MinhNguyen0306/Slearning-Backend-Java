@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface QuestionService {
+    String addQuestionExplanation(UUID questionId, String explanation);
     Question getQuestionById(UUID questionId);
     Answer getAnswerById(UUID answerId);
     Question createQuestion(

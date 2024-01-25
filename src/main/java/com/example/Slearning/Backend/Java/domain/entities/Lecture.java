@@ -58,6 +58,10 @@ public class Lecture extends BaseEntity implements Comparable<Lecture> {
     @JsonIgnore
     private Chapter chapter;
 
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CodingExercise> codingExercises;
+
     @Override
     public int compareTo(Lecture lecture) {
         if(this.getPosition() > lecture.getPosition()) {

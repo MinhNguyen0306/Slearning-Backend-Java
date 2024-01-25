@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,4 +36,8 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     @Query("SELECT SUM(p.amount*0.95) FROM Payment p " +
             "WHERE p.course.user.id = :mentorId ")
     Double getCurrentRevenueOfMentor(@Param("mentorId") UUID mentorId);
+
+    @Query("SELECT p FROM Payment p " +
+            "WHERE p.course.user.id = ?1")
+    List<Payment> getPaymentsOfMentor(UUID mentorId);
 }
